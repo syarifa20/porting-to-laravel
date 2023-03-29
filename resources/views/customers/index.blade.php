@@ -4,11 +4,9 @@
     <div align=center>
         <form action="" method="post">
             <table id="tree"></table>
-            <br>
-            <table id="tree-2">
-                <td id="order"></td>
-            </table>
             <div id="pager"></div>
+            <br>
+            <table id="tree-2"></table>
             <div id="pager2"></div>
         </form>
     </div>

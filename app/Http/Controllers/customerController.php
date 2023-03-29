@@ -229,8 +229,7 @@ class CustomerController extends Controller
 
     }
 
-    public function detailMaster($id_customer){
-       
+    public function detailMaster(Request $request, $id_customer){
             $detailCustomers = DB::table('detail_customers')
                 ->select('nama_brg', 'qty', 'harga')
                 ->where('customer_id', $id_customer)
@@ -252,6 +251,7 @@ class CustomerController extends Controller
             } else {
                 return response()->json([]);
             }
+       
       
     }
 

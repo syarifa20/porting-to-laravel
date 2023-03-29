@@ -248,7 +248,7 @@
                         $('input')
                             .css('text-transform', 'uppercase')
                             .attr('autocomplete', 'off')
-                    }, 50)
+                    }, 250)
 
                 },
            
@@ -260,7 +260,6 @@
             colNames: ["Item name", "Item price", "qty", "Total Price"], // Column names
             pager: "#pager2", // The pagination element
             rowNum: 10, // Number of rows per page
-            // loadonce: true,
             rowList: [10, 20, 30],
             rownumbers: true, // Dropdown for selecting rows per page
             viewrecords: true, // Show total number of records
@@ -327,7 +326,7 @@
             onSelectRow: function(id) {
                 activeGrid = '#tree-2'
                 idCustomer = $(this).jqGrid('getRowData', id).id_customer
-                // console.log(idCustomer);
+                console.log(activeGrid);
                 
             },
             keys: true,
