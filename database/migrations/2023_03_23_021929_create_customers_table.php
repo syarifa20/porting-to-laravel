@@ -14,12 +14,13 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('no_invoice');
+            $table->increments('id_customer')->autoIncrement();;
+            $table->string('no_invoice')->unique();;
             $table->string('nama');
             $table->date('tgl_pembelian');
-            $table->integer('saldo');
+            $table->integer('saldo'); 
             $table->string('gender');
+            $table->timestamps();
           
         });
     }

@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" media="screen" href="/css/theme/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="/css/trirand/ui.jqgrid.css" />

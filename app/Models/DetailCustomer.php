@@ -14,4 +14,10 @@ class DetailCustomer extends Model
         'harga',
         'qty',
     ];
+    public $timestamps = true;
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

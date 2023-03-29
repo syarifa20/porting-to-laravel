@@ -18,6 +18,7 @@ class CustSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
+        $now = date('Y-m-d H:i:s');
 
         for ($i = 1; $i <= 100; $i++) {
             DB::table('customers')->insert([
@@ -26,6 +27,8 @@ class CustSeeder extends Seeder
                 'tgl_pembelian' => Carbon::create('2000', '01', '01')->addDays($i),
                 'saldo' => rand(0, 1000000),
                 'gender' =>$faker->randomElement(['LAKI-LAKI', 'PEREMPUAN']),
+                'created_at' => $now,
+                'updated_at' => $now
             ]);
         }
     }

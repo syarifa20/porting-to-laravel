@@ -20,10 +20,20 @@ Route::get('/', function () {
 // Route::get('/mdgrid',[customerController::class, 'index']);
 Route::prefix('customers')->group(function () {
     Route::get('mdgrid', [customerController::class, 'index']);
-    // Route::get('parameter/structure', 'ParameterController@structure');
-    // Route::get('parameter/{id}', 'ParameterController@show');
-    // Route::post('parameter', 'ParameterController@store');
-    // Route::patch('parameter/{id}', 'ParameterController@update');
-    // Route::delete('parameter/{id}', 'ParameterController@destroy');
+    Route::get('show', [customerController::class, 'showData']);
+    Route::post('mdgrid/store', [customerController::class, 'store']);
+    Route::get('mdgrid/getposition', [customerController::class, 'getPosition']);
+    Route::post('mdgrid/update', [customerController::class, 'update']);
+    Route::post('mdgrid/delete', [customerController::class, 'delete']);
+    Route::get('form-add', [customerController::class, 'showDialogAdd']);
+    Route::get('form-update/{id_customer}', [customerController::class, 'showDialogUpdate']);
+    Route::get('form-delete/{id_customer}', [customerController::class, 'showDialogDelete']);
+    Route::get('detail/{id_customer}', [customerController::class, 'detailMaster']);
 
+    // report dan export
+    Route::get('report', [customerController::class, 'report']);
+    Route::get('export', [customerController::class, 'export']);
 });
+
+
+

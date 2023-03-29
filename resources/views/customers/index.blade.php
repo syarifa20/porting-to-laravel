@@ -1,4 +1,4 @@
-@include('customers.layout.header');
+@include('customers.layout.header')
 
 <body>
     <div align=center>
@@ -16,4 +16,4 @@
     <div id="dialog"></div>
 
     
-@include('customers.layout.footer');
+@include('customers.layout.footer')
