@@ -316,7 +316,12 @@ class CustomerController extends Controller
             }
     
             $tempdata['sales'] = array_merge($tempdata['sales'] ?? [], $salesDetail);
+            
+            foreach ($tempdata['sales'] as &$sale) {
+                $sale['tgl_pembelian'] = date('d-m-Y', strtotime($sale['tgl_pembelian']));
+            }
         }
+        // dd($tempdata);
 
        
         return view('customers.report', ['data' => $tempdata]);
