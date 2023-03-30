@@ -7,11 +7,22 @@ use App\Models\DetailCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use stdClass;
 
 class CustomerController extends Controller
 {
+    // protected $query;
+
+    // public function __construct(Customer $query)
+    // {
+    //     $this->$query = $query;
+    // }
+
     public function index(Request $request)
     {
         $filters = $request->input('filters', []);
@@ -76,10 +87,6 @@ class CustomerController extends Controller
         return view('customers.form.create');
     }
 
-    public function getPosition(){
-        echo 'berhasil';
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -100,8 +107,8 @@ class CustomerController extends Controller
             $customer->gender = $request->input('gender_id');
             $customer->save();
         
-            $id = $customer->id;
-
+            $id = $customer->id_customer;
+            
         
             if ($request->filled('item_name')) {
                 foreach ($request->input('item_name') as $index => $item_name) {
@@ -113,7 +120,6 @@ class CustomerController extends Controller
                     $detail_customer->save();
                 }
             }
-           
             DB::commit();
             $res = $id;
             return response()->json($res);
@@ -158,7 +164,7 @@ class CustomerController extends Controller
         $qty = $request->input('qty');
         $harga = $request->input('item_price');
     
-        $num = intval(floatval(str_replace(",", ".", $saldo)) * 100);
+        $num = intval(str_replace(".", "", $saldo));
     
         try {
             DB::beginTransaction();
@@ -329,7 +335,7 @@ class CustomerController extends Controller
 
     public function export(){
         $id_customer = request('id_customer');
-        $sidx = request('sidx', 'id');
+        $sidx = request('sidx', 'nama');
         $sord = request('sord', 'asc');
         $global_search = request('global_search');
         $filters = request('filters') ? json_decode(request('filters')) : null;
@@ -381,7 +387,83 @@ class CustomerController extends Controller
         return view('customers.export', ['data' => $salesDetail]);
     }
 
+    public function getPosition($id_customer)
+    {
+        $sidx = request('sidx', 'id');
+        $sord = request('sord', 'asc');
+        $global_search = request('global_search');
+        $filters = request('filters') ? json_decode(request('filters')) : null;
+        $search = request()->has('_search');
+
+        $table = 'temporary';
+
+        Schema::create($table, function (Blueprint $table) {
+            $table->integer('id_customer');
+            $table->increments('position')->unique();
+            $table->string('no_invoice');
+            $table->string('nama');
+            $table->date('tgl_pembelian');
+            $table->integer('saldo'); 
+            $table->string('gender');
+            $table->timestamps();
+        });
+
+        $query = DB::table('customers');
+        
+        $query->select(['id_customer', 'no_invoice', 'nama', 'tgl_pembelian', 'saldo', 'gender', 'created_at', 'updated_at']);
+
+        // dd($customers);
+
+        if ($global_search) {
+            $query->where(function ($query) use ($global_search) {
+                $query->where('no_invoice', 'like', '%' . $global_search . '%')
+                    ->orWhere('nama', 'like', '%' . $global_search . '%')
+                    ->orWhere('tgl_pembelian', 'like', '%' . $global_search . '%')
+                    ->orWhere('saldo', 'like', '%' . $global_search . '%')
+                    ->orWhere('gender', 'like', '%' . $global_search . '%');
+            });
+        }
+
+        if ($filters) {
+            foreach ($filters->rules as $rule) {
+                $query->where($rule->field, 'like', '%' . $rule->data . '%');
+            }
+        }
+
+        $query->orderBy($sidx, $sord);
+
+        $customers = $query->get();
+
+
+        $data = $customers->map(function ($customer,$index) {
+            return [
+                'id_customer' => $customer->id_customer,
+                'no_invoice' => $customer->no_invoice,
+                'nama' => $customer->nama,
+                'tgl_pembelian' => $customer->tgl_pembelian,
+                'saldo' => $customer->saldo,
+                'gender' => $customer->gender,
+                'created_at' => $customer->created_at,
+                'updated_at' => $customer->updated_at,
+            ];
+        })->toArray();
+
+        DB::table($table)->insert($data);
+
+        $position = DB::table($table)->where('id_customer', $id_customer)->value('position');
+
+        $dataPosisi = [
+            'posisi' => $position,
+
+        ];
+        Schema::dropIfExists($table);
+
+
+        return response()->json($dataPosisi);
     }
+    
+
+}
        
    
 

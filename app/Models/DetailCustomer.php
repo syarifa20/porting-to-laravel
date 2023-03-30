@@ -13,6 +13,7 @@ class DetailCustomer extends Model
         'nama_brg',
         'harga',
         'qty',
+        'customer_id',
     ];
     public $timestamps = true;
 

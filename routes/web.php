@@ -29,6 +29,7 @@ Route::prefix('customers')->group(function () {
     Route::get('form-update/{id_customer}', [customerController::class, 'showDialogUpdate']);
     Route::get('form-delete/{id_customer}', [customerController::class, 'showDialogDelete']);
     Route::get('detail/{id_customer}', [customerController::class, 'detailMaster']);
+    Route::get('show/{id_customer}/position', [customerController::class, 'getPosition']);
 
     // report dan export
     Route::get('report', [customerController::class, 'report']);

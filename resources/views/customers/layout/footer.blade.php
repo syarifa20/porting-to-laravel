@@ -426,9 +426,9 @@
                                         dataType:"json",
                                         success: function (response, postdata, oper){
                                           alert("Data berhasil ditambahkan");
-                                        //   position(response, postdata, oper)
-                                            $(customerDialog).dialog('close')
-                                            $('#tree').trigger('reloadGrid')
+                                          position(response, postdata, oper)
+                                            // $(customerDialog).dialog('close')
+                                            // $('#tree').trigger('reloadGrid')
                                         },
                 
                                         })
@@ -753,9 +753,8 @@
                                         dataType:"json",
                                         success: function (response, postdata, oper){
                                           alert("Data berhasil diupdate");
-                                        //   position(response, postdata, oper)
-                                        $(customerDialog).dialog('close')
-					                    $('#tree').trigger('reloadGrid')
+                                          position(response, postdata, oper)
+                                       
                                         },
                 
                                         })   
@@ -942,10 +941,10 @@
             var filterRules = $('#tree').jqGrid('getGridParam', 'postData').filters;
             var globalsearch = $('#tree').jqGrid('getGridParam', 'postData').global_search;
             var id_customer = JSON.parse(response);
-            // console.log(id_customer);
+            // console.log("ini adalah id : "+id_customer);
 
             $.ajax({
-                    url: "after_save.php",
+                    url: "show/"+ id_customer + "/position",
                     dataType: "json",
                     data: {
                         'id_customer': id_customer,
@@ -956,9 +955,8 @@
                     }
                 })
                 .done(function(data) {
-                    // console.log(data);
-                   
-                    let posisi = data[0].position;
+                    let posisi = data.posisi;
+
                     let pager = Math.ceil(posisi / pagesize);
                     let baris = posisi - ((pager - 1) * pagesize);
 
@@ -970,6 +968,7 @@
                     $("#cancelAdd").click();  
                     
                 })
+                
             }
 
             function  sanitizeFormInputs (form){
