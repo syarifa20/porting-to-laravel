@@ -38,6 +38,35 @@ class Customer extends Model
         return $this->HasMany(DetailCustomer::class);
     }
 
+    protected $uppercaseFields = ['no_invoice', 'nama','gender'];
+
+    public function setNoInvoiceAttribute($value)
+    {
+        if (in_array('no_invoice', $this->uppercaseFields)) {
+            $this->attributes['no_invoice'] = strtoupper($value);
+        } else {
+            $this->attributes['no_invoice'] = $value;
+        }
+    }
+
+    public function seNamaAttribute($value)
+    {
+        if (in_array('nama', $this->uppercaseFields)) {
+            $this->attributes['nama'] = strtoupper($value);
+        } else {
+            $this->attributes['nama'] = $value;
+        }
+    }
+
+    public function setGenderAttribute($value)
+    {
+        if (in_array('gender_id', $this->uppercaseFields)) {
+            $this->attributes['gender'] = strtoupper($value);
+        } else {
+            $this->attributes['gender'] = $value;
+        }
+    }
+
 
     
 }

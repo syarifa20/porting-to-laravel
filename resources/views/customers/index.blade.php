@@ -1,5 +1,4 @@
 @include('customers.layout.header')
-
 <body>
     <div align=center>
         <form action="" method="post">

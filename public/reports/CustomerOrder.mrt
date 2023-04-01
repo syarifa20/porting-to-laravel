@@ -1,10 +1,10 @@
 {
-  "ReportGuid": "2b507d9e0764c0aa7bb37a3f33a29085",
+  "ReportGuid": "8bf2c292b8ef87703925a35159ac4b67",
   "ReportName": "Report",
   "ReportAlias": "Report",
   "ReportFile": "CustomerOrder.mrt",
   "ReportCreated": "/Date(1627890106000+0700)/",
-  "ReportChanged": "/Date(1679035563000+0700)/",
+  "ReportChanged": "/Date(1680166652000+0700)/",
   "EngineVersion": "EngineV2",
   "CalculationMode": "Interpretation",
   "ReportUnit": "Centimeters",
@@ -70,34 +70,55 @@
             "Type": "System.String"
           },
           "6": {
+            "Name": "created_at",
+            "Index": -1,
+            "NameInSource": "created_at",
+            "Alias": "created_at",
+            "Type": "System.String"
+          },
+          "7": {
+            "Name": "updated_at",
+            "Index": -1,
+            "NameInSource": "updated_at",
+            "Alias": "updated_at",
+            "Type": "System.String"
+          },
+          "8": {
             "Name": "id",
             "Index": -1,
             "NameInSource": "id",
             "Alias": "id",
             "Type": "System.String"
           },
-          "7": {
+          "9": {
             "Name": "nama_brg",
             "Index": -1,
             "NameInSource": "nama_brg",
             "Alias": "nama_brg",
             "Type": "System.String"
           },
-          "8": {
-            "Name": "qty",
-            "Index": -1,
-            "NameInSource": "qty",
-            "Alias": "qty",
-            "Type": "System.String"
-          },
-          "9": {
+          "10": {
             "Name": "harga",
             "Index": -1,
             "NameInSource": "harga",
             "Alias": "harga",
             "Type": "System.String"
           },
-          "10": {
+          "11": {
+            "Name": "qty",
+            "Index": -1,
+            "NameInSource": "qty",
+            "Alias": "qty",
+            "Type": "System.String"
+          },
+          "12": {
+            "Name": "customer_id",
+            "Index": -1,
+            "NameInSource": "customer_id",
+            "Alias": "customer_id",
+            "Type": "System.String"
+          },
+          "13": {
             "Name": "no",
             "Index": -1,
             "NameInSource": "no",
@@ -154,7 +175,7 @@
         "1": {
           "Ident": "StiGroupHeaderBand",
           "Name": "GroupHeaderBand1",
-          "ClientRectangle": "0,2.6,21.01,4.2",
+          "ClientRectangle": "0,2.6,21.01,4.8",
           "ComponentPlacement": "gh.Page1",
           "Interaction": {
             "Ident": "StiBandInteraction"
@@ -346,6 +367,67 @@
               "Border": ";;;;;;;solid:Black",
               "Brush": "solid:",
               "TextBrush": "solid:Black"
+            },
+            "9": {
+              "Ident": "StiText",
+              "Name": "Text20",
+              "Guid": "c976a4fb18a5781c5983e74c7026b727",
+              "ClientRectangle": "0,4.2,2.6,0.4",
+              "ComponentPlacement": "gh.GroupHeaderBand1",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": "Gender"
+              },
+              "CanBreak": true,
+              "VertAlignment": "Center",
+              "Font": ";10;;",
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "TextBrush": "solid:Black",
+              "Margins": {
+                "Left": 3,
+                "Right": 0,
+                "Top": 0,
+                "Bottom": 0
+              },
+              "Type": "Expression"
+            },
+            "10": {
+              "Ident": "StiText",
+              "Name": "Text21",
+              "Guid": "4cca624dd6ee064fb4b68a4f68430faa",
+              "ClientRectangle": "3,4.2,0.6,0.4",
+              "ComponentPlacement": "gh.GroupHeaderBand1",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": ":"
+              },
+              "HorAlignment": "Center",
+              "VertAlignment": "Center",
+              "Font": ";10;;",
+              "Border": ";;;;;;;solid:0,0,0",
+              "Brush": "solid:",
+              "TextBrush": "solid:0,0,0",
+              "Type": "Expression"
+            },
+            "11": {
+              "Ident": "StiText",
+              "Name": "Text22",
+              "ClientRectangle": "3.8,4.2,5.4,0.6",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": "{sales.gender}"
+              },
+              "Font": ";10;;",
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "TextBrush": "solid:Black"
             }
           },
           "SortDirection": "None",
@@ -356,7 +438,7 @@
         "2": {
           "Ident": "StiGroupHeaderBand",
           "Name": "GroupHeaderBand2",
-          "ClientRectangle": "0,7.6,21.01,0.6",
+          "ClientRectangle": "0,8.2,21.01,0.6",
           "ComponentPlacement": "gh.Page1",
           "Interaction": {
             "Ident": "StiBandInteraction"
@@ -505,7 +587,7 @@
         "3": {
           "Ident": "StiDataBand",
           "Name": "DataBand4",
-          "ClientRectangle": "0,9,21.01,1",
+          "ClientRectangle": "0,9.6,21.01,1",
           "ComponentPlacement": "d.Page1",
           "Interaction": {
             "Ident": "StiBandInteraction"
@@ -630,7 +712,7 @@
         "4": {
           "Ident": "StiGroupFooterBand",
           "Name": "GroupFooterBand1",
-          "ClientRectangle": "0,10.8,21.01,0.8",
+          "ClientRectangle": "0,11.4,21.01,0.8",
           "ComponentPlacement": "gf.Page1",
           "Interaction": {
             "Ident": "StiInteraction"
@@ -702,7 +784,7 @@
           "Ident": "StiFooterBand",
           "Name": "FooterBand1",
           "PrintOn": "OnlyLastPage",
-          "ClientRectangle": "0,12.4,21.01,0.8",
+          "ClientRectangle": "0,13,21.01,0.8",
           "ComponentPlacement": "f.Page1",
           "Interaction": {
             "Ident": "StiInteraction"

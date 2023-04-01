@@ -4,6 +4,7 @@
     const customerPager = '#pager'
     const customerDialog = '#dialog'
     const customerForm = '#customerForm'
+    const orderTable = '#tree-2'
     
     let indexRow = 0
     let sortName = 'nama'
@@ -20,7 +21,11 @@
     
     let lastSelectedRow;
 
-   
+    // $(window).resize(function() {
+    //     $(customerTable).setGridWidth($(window).width() - 15)
+    //     $(orderTable).setGridWidth($(window).width() - 15)
+    // })
+
     
     $(document).ready(function() {
     
@@ -28,11 +33,11 @@
         $("#tree").jqGrid({
             url: "{{url('customers/mdgrid')}}", // The server-side URL to fetch data from
             datatype: "json",
-            // data: row, // Menggunakan data dari variabel JavaScript
-            colNames: ["id_customer", "No invoice", "Nama Pelanggan", "Tanggal pembelian", "Saldo", "Gender"], // Column names
+            colNames: ["id_customer", "No invoice", "Nama Pelanggan", "Tanggal pembelian", "Saldo", "Gender"],
             pager: "#pager", // The pagination element
             rowNum: 10, // Number of rows per page
-            // loadonce: true,
+            pageable : true,
+            shrinkToFit: true,
             rowList: [10, 20, 30],
             rownumbers: true, // Dropdown for selecting rows per page
             viewrecords: true, // Show total number of records
@@ -56,6 +61,7 @@
             autoencode: true,
             gridview: true,
             debug:true,
+            viewrecords: true,
             closeAfterAdd:true,
             reloadAfterSubmit:true,
             closeAfterEdit:true,
@@ -197,8 +203,17 @@
                     if (idCustomer) getDetail(idCustomer)
                 },
                 loadComplete: function() {
-                   
-                  
+                    // var totalRecords = $("#tree").jqGrid("getGridParam", "records");
+                    // var rowsPerPage = $("#tree").jqGrid("getGridParam", "rowNum");
+                    // var lastPageNumber = $("#tree").jqGrid("getGridParam", "lastpage");
+                    // var lastPageRecords = totalRecords % rowsPerPage;
+
+                    // console.log(lastPageRecords);
+                    // if(lastPageRecords == 0){
+                    //     alert('berhasil');
+                    // }
+
+
                     // convertHanzi()
                     $(document).unbind('keydown')
                     setCustomBindKeys($(this));
@@ -430,7 +445,20 @@
                                             // $(customerDialog).dialog('close')
                                             // $('#tree').trigger('reloadGrid')
                                         },
-                
+                                        error: function(xhr, status, error) {
+                                            if (xhr.status == 422) {
+                                            var response = xhr.responseJSON;
+                                            var message = "";
+                                            for (var key in response.message) {
+                                                if (response.message.hasOwnProperty(key)) {
+                                                message += response.message[key][0] + "\n";
+                                                }
+                                            }
+                                            alert(message);
+                                            } else {
+                                            console.log("Unexpected Error: " + xhr.responseText);
+                                            }
+                                        }
                                         })
                                     
                                      },    
@@ -474,6 +502,7 @@
              onClickButton: function() {
                 if ($(customerTable).jqGrid('getGridParam','selrow') !== null) {
 				activeGrid = undefined
+                
 				hapusDialog()
                 } else {
                     alert('Please, select row')
@@ -487,7 +516,12 @@
              id: "report",
              buttonicon: "ui-icon-print",
              onClickButton: function() {
-                reportDialog();
+                if ($(customerTable).jqGrid('getGridParam','selrow') !== null) {
+				activeGrid = undefined
+				    reportDialog()
+                } else {
+                    alert('Please, select row')
+                }
                      
              }
             })
@@ -676,6 +710,9 @@
 
 
         function hapusDialog(){
+
+           
+
             var selectedRow = $('#tree').jqGrid('getGridParam', 'selrow');
             var rowData = $('#tree').jqGrid('getRowData', selectedRow);
             var id_customer = rowData.id_customer; 
@@ -701,10 +738,8 @@
                             },
                             dataType:"json",
                             success: function (data){
-                                alert("Data berhasil dihapus");
-                                // position(response, postdata, oper);
-                                $(customerDialog).dialog('close')
-					            $('#tree').trigger('reloadGrid')
+                                $(customerDialog).dialog('close');
+                                // $('#tree').trigger('reloadGrid');
 
                             },
                 
@@ -755,6 +790,20 @@
                                           alert("Data berhasil diupdate");
                                           position(response, postdata, oper)
                                        
+                                        },
+                                        error: function(xhr, status, error) {
+                                            if (xhr.status == 422) {
+                                            var response = xhr.responseJSON;
+                                            var message = "";
+                                            for (var key in response.message) {
+                                                if (response.message.hasOwnProperty(key)) {
+                                                message += response.message[key][0] + "\n";
+                                                }
+                                            }
+                                            alert(message);
+                                            } else {
+                                            console.log("Unexpected Error: " + xhr.responseText);
+                                            }
                                         },
                 
                                         })   

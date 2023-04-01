@@ -10,9 +10,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Exception;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use stdClass;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
@@ -89,31 +91,42 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'no_invoice' => 'required',
+        $validator = Validator::make($request->all(), [
+            'no_invoice' => 'required|unique:customers',
             'customer_name' => 'required',
             'tgl_pembelian' => 'required',
             'saldo' => 'required'
+        ], [
+            'no_invoice.required' => 'No Invoice tidak boleh kosong',
+            'no_invoice.unique' => 'No Invoice sudah digunakan',
+            'customer_name.required' => 'Nama Customer tidak boleh kosong',
+            'tgl_pembelian.required' => 'Tanggal Pembelian tidak boleh kosong',
+            'saldo.required' => 'Saldo tidak boleh kosong',
         ]);
-        
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()
+            ],422);
+        }
+    
         try {
             DB::beginTransaction();
         
             $customer = new Customer();
-            $customer->no_invoice = $request->input('no_invoice');
-            $customer->nama = $request->input('customer_name');
+            $customer->no_invoice = strtoupper($request->input('no_invoice'));
+            $customer->nama = strtoupper($request->input('customer_name'));
             $customer->tgl_pembelian = date('Y-m-d', strtotime($request->input('tgl_pembelian')));
             $customer->saldo = intval(str_replace(".", "", $request->input('saldo')));
-            $customer->gender = $request->input('gender_id');
+            $customer->gender = strtoupper($request->input('gender_id'));
             $customer->save();
         
             $id = $customer->id_customer;
             
-        
             if ($request->filled('item_name')) {
                 foreach ($request->input('item_name') as $index => $item_name) {
                     $detail_customer = new DetailCustomer();
-                    $detail_customer->nama_brg = $item_name;
+                    $detail_customer->nama_brg = strtoupper($item_name);
                     $detail_customer->qty = $request->input('qty')[$index];
                     $detail_customer->harga = str_replace(".", "", $request->input('item_price')[$index]);
                     $detail_customer->customer_id = $id;
@@ -133,6 +146,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
     }
+ 
 
     public function showDialogUpdate($id_customer){
         $customers = DB::table('customers')
@@ -144,21 +158,44 @@ class CustomerController extends Controller
     }
 
     public function update(Request $request){
+        $id = $request->input('id_customer');
         // Validate input
-        $request->validate([
-            'no_invoice' => 'required',
+        $validator = Validator::make($request->all(),[
+            'no_invoice' => [
+                'required',
+                function ($attribute, $value, $fail) use ($id) {
+                    $count = DB::table('customers')
+                        ->where('no_invoice', $value)
+                        ->where('id_customer', '<>', $id)
+                        ->count();
+        
+                    if ($count > 0) {
+                        $fail($attribute.' sudah digunakan.');
+                    }
+                },
+            ],
             'customer_name' => 'required',
             'saldo' => 'required',
             'gender_id' => 'required',
+        ], [
+            'no_invoice.required' => 'No Invoice tidak boleh kosong',
+            'customer_name.required' => 'Nama Customer tidak boleh kosong',
+            'saldo.required' => 'Saldo tidak boleh kosong',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()
+            ],422);
+        }
     
         $id_customer = $request->input('id_customer');
-        $no_invoice = $request->input('no_invoice');
-        $customer_name = $request->input('customer_name');
+        $no_invoice = strtoupper($request->input('no_invoice'));
+        $customer_name = strtoupper($request->input('customer_name'));
         $tgl_pembelian = $request->input('tgl_pembelian');
         $date = date('Y-m-d', strtotime($tgl_pembelian));
         $saldo = $request->input('saldo');
-        $gender_id = $request->input('gender_id');
+        $gender_id = strtoupper($request->input('gender_id'));
     
         $nama_brg = $request->input('item_name');
         $qty = $request->input('qty');
@@ -183,7 +220,7 @@ class CustomerController extends Controller
                 DetailCustomer::where('customer_id', $id_customer)->delete();
                 foreach ($nama_brg as $index => $item_name) {
                     $detail_customer = new DetailCustomer();
-                    $detail_customer->nama_brg = $item_name;
+                    $detail_customer->nama_brg = strtoupper($item_name);
                     $detail_customer->qty = $qty[$index];
                     $detail_customer->harga = preg_replace('/[^0-9]/', '', $harga[$index]);
                     $detail_customer->customer_id = $id_customer;
@@ -257,7 +294,6 @@ class CustomerController extends Controller
             } else {
                 return response()->json([]);
             }
-       
       
     }
 
@@ -278,7 +314,7 @@ class CustomerController extends Controller
                 ->orWhere('nama', 'like', '%' . $global_search . '%')
                 ->orWhere('tgl_pembelian', 'like', '%' . $global_search . '%')
                 ->orWhere('saldo', 'like', '%' . $global_search . '%')
-                ->orWhere('gender', 'like', '%' . $global_search . '%');
+                ->orWhere('gender_id', 'like', '%' . $global_search . '%');
             });
         }
        
