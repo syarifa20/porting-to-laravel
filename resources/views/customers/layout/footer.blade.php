@@ -198,21 +198,14 @@
                         .jqGrid('getRowData', id).id_customer
                         .replace(/(<([^>]+)>)/ig,"")
 
-                        // console.log(idCustomer);
 
                     if (idCustomer) getDetail(idCustomer)
                 },
                 loadComplete: function() {
-                    // var totalRecords = $("#tree").jqGrid("getGridParam", "records");
-                    // var rowsPerPage = $("#tree").jqGrid("getGridParam", "rowNum");
-                    // var lastPageNumber = $("#tree").jqGrid("getGridParam", "lastpage");
-                    // var lastPageRecords = totalRecords % rowsPerPage;
-
-                    // console.log(lastPageRecords);
-                    // if(lastPageRecords == 0){
-                    //     alert('berhasil');
-                    // }
-
+                    var totalRecords = $("#tree").jqGrid("getGridParam", "records");
+                    var rowsPerPage = $("#tree").jqGrid("getGridParam", "rowNum");
+                    var lastPageNumber = $("#tree").jqGrid("getGridParam", "lastpage");
+                    var lastPageRecords = totalRecords % rowsPerPage;
 
                     // convertHanzi()
                     $(document).unbind('keydown')
@@ -220,49 +213,56 @@
                     postData = $(this).jqGrid('getGridParam', 'postData')
 
                     setTimeout(function() {
-
-                        $('#tree tbody tr td:not([aria-describedby=tree_rn])').highlight(highlightSearch)
-
-                        if (indexRow > $('#tree').getDataIDs().length - 1) {
-                            indexRow = $('#tree').getDataIDs().length - 1
-                        }
-
-                        if (triggerClick) {
-                            $('#' + $('#tree').getDataIDs()[indexRow]).click()
-                            triggerClick = false
+                        if ($("#tree").jqGrid("getGridParam", "reccount") === 0) {
+                            indexRow = rowsPerPage - 1;
+                            
+                            $("#tree").jqGrid().trigger('reloadGrid', {
+                                page: lastPageNumber
+                            })
                         } else {
-                            $('#tree').setSelection($('#tree').getDataIDs()[indexRow])
+                            $('#tree tbody tr td:not([aria-describedby=tree_rn])').highlight(highlightSearch)
+
+                            if (indexRow > $('#tree').getDataIDs().length - 1) {
+                                indexRow = $('#tree').getDataIDs().length - 1
+                            }
+
+                            if (triggerClick) {
+                                $('#' + $('#tree').getDataIDs()[indexRow]).click()
+                                triggerClick = false
+                            } else {
+                                $('#tree').setSelection($('#tree').getDataIDs()[indexRow])
+                            }
+
+                            $('#gsh_tree_rn').html(`
+                            <button type="button" id="clearFilter" title="Clear Filter" style="width: 100%; height: 100%;"> X </button>	
+                                `)
+
+                            $('[id*=gs_]').on('input', function() {
+                                highlightSearch = $(this).val()
+                                clearTimeout(timeout)
+
+                                timeout = setTimeout(function() {
+                                    $('#tree').trigger('reloadGrid')
+                                }, 500);
+                            })
+
+                            $('#t_tree input').on('input', function() {
+                                clearTimeout(timeout)
+
+                                timeout = setTimeout(function() {
+                                    indexRow = 0
+                                    $(customerTable).jqGrid('setGridParam', {
+                                        postData: {
+                                            'global_search': highlightSearch
+                                        }
+                                    }).trigger('reloadGrid')
+                                }, 500);
+                            })
+
+                            $('input')
+                                .css('text-transform', 'uppercase')
+                                .attr('autocomplete', 'off')
                         }
-
-                        $('#gsh_tree_rn').html(`
-                        <button type="button" id="clearFilter" title="Clear Filter" style="width: 100%; height: 100%;"> X </button>	
-                            `)
-
-                        $('[id*=gs_]').on('input', function() {
-                            highlightSearch = $(this).val()
-                            clearTimeout(timeout)
-
-                            timeout = setTimeout(function() {
-                                $('#tree').trigger('reloadGrid')
-                            }, 500);
-                        })
-
-                        $('#t_tree input').on('input', function() {
-                            clearTimeout(timeout)
-
-                            timeout = setTimeout(function() {
-                                indexRow = 0
-                                $(customerTable).jqGrid('setGridParam', {
-                                    postData: {
-                                        'global_search': highlightSearch
-                                    }
-                                }).trigger('reloadGrid')
-                            }, 500);
-                        })
-
-                        $('input')
-                            .css('text-transform', 'uppercase')
-                            .attr('autocomplete', 'off')
                     }, 250)
 
                 },
@@ -739,7 +739,7 @@
                             dataType:"json",
                             success: function (data){
                                 $(customerDialog).dialog('close');
-                                // $('#tree').trigger('reloadGrid');
+                                $('#tree').trigger('reloadGrid');
 
                             },
                 
@@ -761,7 +761,7 @@
 
 
 
-        function editDialog(){
+        function editDialog(){  
                     var selectedRow = $('#tree').jqGrid('getGridParam', 'selrow');
                     var rowData = $('#tree').jqGrid('getRowData', selectedRow);
                     var id= rowData.id_customer; 
