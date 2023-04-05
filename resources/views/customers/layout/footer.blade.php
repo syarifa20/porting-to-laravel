@@ -205,7 +205,6 @@
                     var totalRecords = $("#tree").jqGrid("getGridParam", "records");
                     var rowsPerPage = $("#tree").jqGrid("getGridParam", "rowNum");
                     var lastPageNumber = $("#tree").jqGrid("getGridParam", "lastpage");
-                    var lastPageRecords = totalRecords % rowsPerPage;
 
                     // convertHanzi()
                     $(document).unbind('keydown')
@@ -214,11 +213,16 @@
 
                     setTimeout(function() {
                         if ($("#tree").jqGrid("getGridParam", "reccount") === 0) {
+                            if (totalRecords === 0) {
+                               indexRow
+                            }else{
                             indexRow = rowsPerPage - 1;
                             
                             $("#tree").jqGrid().trigger('reloadGrid', {
                                 page: lastPageNumber
                             })
+                        }
+
                         } else {
                             $('#tree tbody tr td:not([aria-describedby=tree_rn])').highlight(highlightSearch)
 

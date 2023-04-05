@@ -37,7 +37,7 @@
                     @csrf
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     <input type="hidden" id="id_customer" name="id_customer" value="{{ $customers[0]->id_customer }}">
-                    <input type="text" id="no_invoice" name="no_invoice" class="FormElement ui-widget-content ui-corner-all" onkeyup="this.value = this.value.toUpperCase();" value="{{ $customers[0]->no_invoice }}" autocomplete="off">
+                    <input type="text" id="no_invoice" name="no_invoice" class="FormElement ui-widget-content ui-corner-all" onkeyup="this.value = this.value.toUpperCase();" value="{{ $customers[0]->no_invoice }}" autocomplete="off" readonly>
                 </td>
             </tr>
             <tr>

@@ -15,7 +15,7 @@ class CreateCustomersTable extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->increments('id_customer')->autoIncrement();;
-            $table->string('no_invoice')->unique();;
+            $table->integer('no_invoice')->unique();;
             $table->string('nama');
             $table->date('tgl_pembelian');
             $table->integer('saldo'); 

@@ -25,7 +25,7 @@
                 <td>
                     @csrf
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                    <input type="text" id="no_invoice" name="no_invoice" class="FormElement ui-widget-content ui-corner-all" autocomplete="off" onkeyup="this.value = this.value.toUpperCase();">
+                    <input type="text" id="no_invoice" name="no_invoice" class="FormElement ui-widget-content ui-corner-all" autocomplete="off" onkeyup="this.value = this.value.toUpperCase();" disabled>
 
 
                 </td>

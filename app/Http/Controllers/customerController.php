@@ -92,12 +92,11 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'no_invoice' => 'required|unique:customers',
+            'no_invoice' => 'unique:customers',
             'customer_name' => 'required',
             'tgl_pembelian' => 'required',
             'saldo' => 'required'
         ], [
-            'no_invoice.required' => 'No Invoice tidak boleh kosong',
             'no_invoice.unique' => 'No Invoice sudah digunakan',
             'customer_name.required' => 'Nama Customer tidak boleh kosong',
             'tgl_pembelian.required' => 'Tanggal Pembelian tidak boleh kosong',
@@ -112,9 +111,22 @@ class CustomerController extends Controller
     
         try {
             DB::beginTransaction();
+
+            $prefix = '23';
+
+            $customers = DB::table('customers')->lockForUpdate()->get();
+
+            $last_invoice_no = 0;
+            if ($customers->isNotEmpty()) {
+                $last_invoice_no = substr($customers->max('no_invoice'), 2);
+            }
+
+            $new_invoice_no = intval($last_invoice_no) + 1;
+
+            $no_invoice = $prefix . str_pad($new_invoice_no, 4, '0', STR_PAD_LEFT);
         
             $customer = new Customer();
-            $customer->no_invoice = strtoupper($request->input('no_invoice'));
+            $customer->no_invoice = $no_invoice;
             $customer->nama = strtoupper($request->input('customer_name'));
             $customer->tgl_pembelian = date('Y-m-d', strtotime($request->input('tgl_pembelian')));
             $customer->saldo = intval(str_replace(".", "", $request->input('saldo')));
@@ -303,7 +315,7 @@ class CustomerController extends Controller
         $global_search = $request->input('global_search');
         $filters = $request->input('filters') ? json_decode($request->input('filters')) : null;
         $start = $request->input('start');
-        $limit = $request->input('limit');
+        $limit = $request->input('limit');   
 
         $query = DB::table('customers');
         $query->select('*');

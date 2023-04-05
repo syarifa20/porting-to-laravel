@@ -22,7 +22,7 @@ class CustSeeder extends Seeder
 
         for ($i = 1; $i <= 100; $i++) {
             DB::table('customers')->insert([
-                'no_invoice' => $this->generateInvoiceNumber($i),
+                'no_invoice' => 1,
                 'nama' => $faker->name(),
                 'tgl_pembelian' => Carbon::create('2000', '01', '01')->addDays($i),
                 'saldo' => rand(0, 1000000),
